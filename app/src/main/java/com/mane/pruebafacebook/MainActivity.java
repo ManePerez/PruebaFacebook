@@ -2,17 +2,10 @@ package com.mane.pruebafacebook;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -24,8 +17,9 @@ import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareButton;
 
-import java.security.MessageDigest;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ProfileTracker profileTracker;
     LoginButton loginButton;
     TextView nombre;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -62,13 +57,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
+                ShareLinkContent content = new ShareLinkContent.Builder()
+                        .setContentUrl(Uri.parse("https://developers.facebook.com"))
+                        .build();
+                ShareButton shareButton = (ShareButton)findViewById(R.id.fb_share_button);
+                shareButton.setShareContent(content);
                 AccessToken accessToken = loginResult.getAccessToken();
                 Profile profile = Profile.getCurrentProfile();
                 Datos(profile);
                 accessTokenTracker = new AccessTokenTracker() {
                     @Override
                     protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-
                     }
                 };
                 profileTracker = new ProfileTracker() {
